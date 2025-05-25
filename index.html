@@ -234,13 +234,18 @@
   });
 
   loadMessages();
+
+  document.getElementById("adminOkBtn").addEventListener("click", () => {
+  loadMessages();
+});
+
 </script>
 
 <!-- Mã admin -->
 <button id="adminToggle" style="position: fixed; bottom: 20px; right: 20px; background: #4CAF50; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer;">🔐 Nhập mã admin</button>
 <div id="adminBox" style="display: none; position: fixed; bottom: 70px; right: 20px; background: rgba(0,0,0,0.8); padding: 10px; border-radius: 8px;">
   <input type="password" id="adminCode" placeholder="Mã admin" style="padding: 6px; border-radius: 4px; border: none;">
-  <button type="button" onclick="loadMessages()" style="margin-left: 6px; padding: 6px 10px; background: #4CAF50; color: white; border: none; border-radius: 4px;">OK</button>
+  <button type="button" id="adminOkBtn" style="margin-left: 6px; padding: 6px 10px; background: #4CAF50; color: white; border: none; border-radius: 4px;">OK</button>
 </div>
 <script>
   document.getElementById("adminToggle").addEventListener("click", () => {
