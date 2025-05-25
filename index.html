@@ -3,43 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>A6 - nơi lưu giữ những kỉ niệm</title>
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: black;
-      color: white;
-      overflow: hidden;
-    }
-
-    h1 {
-      font-size: 2.5em;
-      text-align: center;
-      animation: fadein 2s ease-in-out;
-    }
-
-    @keyframes fadein {
-      0% { opacity: 0; transform: scale(0.9); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    audio {
-      display: none;
-    }
-  </style>
+  <title>Lưu giữ kỉ niệm A6</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 </head>
 <body>
-  <div>
-    <h1>A6 - nơi lưu giữ những kỉ niệm</h1>
-    <audio autoplay loop>
-      <source src="https://www.technobladeneverdies.com/music.mp3" type="audio/mpeg">
-      Trình duyệt của bạn không hỗ trợ audio.
-    </audio>
-  </div>
+  <h1>Gửi lời nhắn</h1>
+  <input type="text" id="messageInput" placeholder="Nhập lời nhắn...">
+  <button id="submitBtn">Gửi</button>
+  <h2>Các lời nhắn</h2>
+  <div id="messageList"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhsQAGuHcWJs79kl49AJClCvEbzcqob30",
+      authDomain: "a6noiluugiunhungkiniem.firebaseapp.com",
+      projectId: "a6noiluugiunhungkiniem",
+      storageBucket: "a6noiluugiunhungkiniem.firebasestorage.app",
+      messagingSenderId: "834977276667",
+      appId: "1:834977276667:web:704f0a898394e3744ec65e",
+      measurementId: "G-GHK2V4XZ38"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    document.getElementById("submitBtn").addEventListener("click", function () {
+      const msg = document.getElementById("messageInput").value;
+      if (msg.trim() !== "") {
+        db.collection("messages").add({
+          content: msg,
+          timestamp: new Date()
+        });
+        document.getElementById("messageInput").value = "";
+      }
+    });
+
+    function loadMessages() {
+      db.collection("messages").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+        const container = document.getElementById("messageList");
+        container.innerHTML = "";
+        snapshot.forEach(doc => {
+          const p = document.createElement("p");
+          p.textContent = doc.data().content;
+          container.appendChild(p);
+        });
+      });
+    }
+
+    loadMessages();
+  </script>
 </body>
 </html>
