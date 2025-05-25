@@ -105,103 +105,105 @@
     </div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAhsQAGuHCWJs79k149AJC1CvEbzcqob30",
-      authDomain: "a6noiluugiunhungkiniem.firebaseapp.com",
-      projectId: "a6noiluugiunhungkiniem",
-      storageBucket: "a6noiluugiunhungkiniem.appspot.com",
-      messagingSenderId: "834977276667",
-      appId: "1:834977276667:web:704f0a898394e3744ec65e",
-      measurementId: "G-GHK2V4XZ38"
-    };
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+  const firebaseConfig = {
+    apiKey: "AIzaSyAhsQAGuHCWJs79k149AJC1CvEbzcqob30",
+    authDomain: "a6noiluugiunhungkiniem.firebaseapp.com",
+    projectId: "a6noiluugiunhungkiniem",
+    storageBucket: "a6noiluugiunhungkiniem.appspot.com",
+    messagingSenderId: "834977276667",
+    appId: "1:834977276667:web:704f0a898394e3744ec65e",
+    measurementId: "G-GHK2V4XZ38"
+  };
 
-    const submitBtn = document.getElementById("submitBtn");
-    const nameInput = document.getElementById("nameInput");
-    const messageInput = document.getElementById("messageInput");
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-    submitBtn.addEventListener("click", async function () {
-      const name = nameInput.value.trim();
-      const msg = messageInput.value.trim();
+  const submitBtn = document.getElementById("submitBtn");
+  const nameInput = document.getElementById("nameInput");
+  const messageInput = document.getElementById("messageInput");
 
-      if (!name || !msg) {
-        alert("Vui lòng nhập tên và lời nhắn.");
-        return;
-      }
+  submitBtn.addEventListener("click", async function () {
+    const name = nameInput.value.trim();
+    const msg = messageInput.value.trim();
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Đang gửi...";
+    if (!name || !msg) {
+      alert("Vui lòng nhập tên và lời nhắn.");
+      return;
+    }
 
-      try {
-        await db.collection("messages").add({
-          name: name,
-          content: msg,
-          timestamp: new Date()
-        });
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Đang gửi...";
 
-        messageInput.value = "";
-        alert("Gửi thành công!");
-      } catch (error) {
-        console.error("Lỗi khi gửi tin nhắn:", error);
-        alert("Đã xảy ra lỗi khi gửi lời nhắn. Vui lòng thử lại.");
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Gửi";
-      }
-    });
-
-    let currentPage = 1;
-    const messagesPerPage = 10;
-
-    function renderMessages(docs) {
-      const container = document.getElementById("messageList");
-      container.innerHTML = "";
-
-      docs.forEach(doc => {
-        const data = doc.data();
-        const div = document.createElement("div");
-        div.className = "message";
-        const date = data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
-        div.innerHTML = `<strong>${data.name}</strong> (${date.toLocaleString()}):<br>${data.content}`;
-        container.appendChild(div);
+    try {
+      await addDoc(collection(db, "messages"), {
+        name: name,
+        content: msg,
+        timestamp: new Date()
       });
-    }
 
-    async function loadMessages() {
-      const formSection = document.getElementById("formSection");
-      const snapshot = await db.collection("messages").orderBy("timestamp", "desc").get();
-      const messages = snapshot.docs;
-
-      const startIndex = (currentPage - 1) * messagesPerPage;
-      const endIndex = startIndex + (currentPage === 1 ? 5 : 10);
-
-      renderMessages(messages.slice(startIndex, endIndex));
-
-      formSection.style.display = currentPage === 1 ? "block" : "none";
-      document.getElementById("pageInfo").textContent = `Trang ${currentPage}`;
-
-      document.getElementById("prevPage").disabled = currentPage === 1;
-      document.getElementById("nextPage").disabled = endIndex >= messages.length;
-    }
-
-    document.getElementById("prevPage").addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        loadMessages();
-      }
-    });
-
-    document.getElementById("nextPage").addEventListener("click", () => {
-      currentPage++;
+      messageInput.value = "";
+      alert("Gửi thành công!");
       loadMessages();
-    });
+    } catch (error) {
+      console.error("Lỗi khi gửi tin nhắn:", error);
+      alert("Đã xảy ra lỗi khi gửi lời nhắn. Vui lòng thử lại.");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Gửi";
+    }
+  });
 
+  let currentPage = 1;
+  const messagesPerPage = 10;
+
+  async function loadMessages() {
+    const formSection = document.getElementById("formSection");
+    const q = query(collection(db, "messages"), orderBy("timestamp", "desc"));
+    const snapshot = await getDocs(q);
+    const messages = snapshot.docs;
+
+    const startIndex = (currentPage - 1) * messagesPerPage;
+    const endIndex = startIndex + (currentPage === 1 ? 5 : 10);
+
+    renderMessages(messages.slice(startIndex, endIndex));
+
+    formSection.style.display = currentPage === 1 ? "block" : "none";
+    document.getElementById("pageInfo").textContent = `Trang ${currentPage}`;
+    document.getElementById("prevPage").disabled = currentPage === 1;
+    document.getElementById("nextPage").disabled = endIndex >= messages.length;
+  }
+
+  function renderMessages(docs) {
+    const container = document.getElementById("messageList");
+    container.innerHTML = "";
+
+    docs.forEach(doc => {
+      const data = doc.data();
+      const div = document.createElement("div");
+      div.className = "message";
+      const date = data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
+      div.innerHTML = `<strong>${data.name}</strong> (${date.toLocaleString()}):<br>${data.content}`;
+      container.appendChild(div);
+    });
+  }
+
+  document.getElementById("prevPage").addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      loadMessages();
+    }
+  });
+
+  document.getElementById("nextPage").addEventListener("click", () => {
+    currentPage++;
     loadMessages();
-  </script>
+  });
+
+  loadMessages();
+</script>
 </body>
 </html>
