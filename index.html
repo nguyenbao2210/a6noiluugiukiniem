@@ -1,58 +1,68 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
   <meta charset="UTF-8">
   <title>Nơi lưu giữ kỉ niệm A6 niên khóa 2021-2025</title>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-image: url('https://i.imgur.com/YOUR_BACKGROUND_IMAGE.jpg');
+      background-image: url('d4465b16-5a30-4307-8648-55c78a2eaeb6.png'); https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.tiktok.com%2Fdiscover%2Fgoodbye-to-my-classmates-and-my-teachers&psig=AOvVaw3Bu-9x__lEvv15qrUK8o_r&ust=1748257893926000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCIDzz-2-vo0DFQAAAAAdAAAAABAM
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      color: #fff;
-      text-align: center;
-      padding: 30px;
-    }
-    #messageList p {
-      background: rgba(0, 0, 0, 0.5);
-      padding: 10px;
-      border-radius: 5px;
-      margin: 5px auto;
-      width: 80%;
-    }
-    input {
-      padding: 5px;
-      border-radius: 4px;
-      border: none;
-    }
-    button {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 4px;
-      background-color: #2196F3;
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
       color: white;
-      cursor: pointer;
+      text-shadow: 1px 1px 2px #000;
     }
-    button:disabled {
-      background-color: grey;
+
+    .container {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+      border-radius: 10px;
+      margin-top: 30px;
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    #messageList {
+      margin-top: 20px;
+    }
+
+    input, button {
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    #submitBtn {
+      margin-left: 8px;
     }
   </style>
 </head>
 <body>
-  <h1>Nơi lưu giữ kỉ niệm A6 niên khóa 2021-2025</h1>
-  <p>Đã 1 khoảng thời gian trôi qua và chúng ta đều có cho mình những kỉ niệm đẹp cùng nhau. Nhưng có thể sau này sẽ không còn gặp nhau được nữa. Khi nghĩ về điều đó, mỗi chúng ta đều có suy nghĩ và cảm xúc khác nhau. Và tại đây, tôi mong muốn có thể được nghe cảm xúc thật của các bạn về khoảng thời gian cấp 2 đầy đẹp đẽ này.</p>
+  <div class="container">
+    <h1>Nơi lưu giữ kỉ niệm A6 niên khóa 2021-2025</h1>
+    <p style="text-align: center; font-style: italic;">
+      Đã 1 khoảng thời gian trôi qua và chúng ta đều có cho mình những kỉ niệm đẹp cùng nhau. Nhưng có thể sau này sẽ không còn gặp nhau được nữa. Khi nghĩ về điều đó, mỗi chúng ta đều có suy nghĩ và cảm xúc khác nhau. Và tại đây, tôi mong muốn có thể được nghe cảm xúc thật của các bạn về khoảng thời gian cấp 2 đầy đẹp đẽ này.
+    </p>
 
-  <h2>Gửi lời nhắn</h2>
-  <input id="nameInput" placeholder="Tên của bạn...">
-  <input id="messageInput" placeholder="Nhập lời nhắn...">
-  <button id="submitBtn">Gửi</button>
+    <h2>Gửi lời nhắn</h2>
+    <input type="text" id="nameInput" placeholder="Tên của bạn...">
+    <input type="text" id="messageInput" placeholder="Nhập lời nhắn...">
+    <button id="submitBtn">Gửi</button>
 
-  <h2>Cảm xúc của mọi người</h2>
-  <div id="messageList"></div>
+    <h2>Cảm xúc của mọi người</h2>
+    <div id="messageList"></div>
+  </div>
 
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAhsQAGuHcWJs79kl49AJClCvEbzcqob30",
@@ -67,24 +77,17 @@
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const submitBtn = document.getElementById("submitBtn");
-    const messageInput = document.getElementById("messageInput");
-    const nameInput = document.getElementById("nameInput");
-
-    submitBtn.addEventListener("click", function () {
-      const msg = messageInput.value.trim();
-      const name = nameInput.value.trim() || "Ẩn danh";
-      if (!msg) return;
-
-      submitBtn.disabled = true;
-      db.collection("messages").add({
-        name: name,
-        content: msg,
-        timestamp: new Date()
-      }).then(() => {
-        messageInput.value = "";
-        submitBtn.disabled = false;
-      });
+    document.getElementById("submitBtn").addEventListener("click", function () {
+      const name = document.getElementById("nameInput").value.trim();
+      const msg = document.getElementById("messageInput").value.trim();
+      if (msg && name) {
+        db.collection("messages").add({
+          name: name,
+          content: msg,
+          timestamp: new Date()
+        });
+        document.getElementById("messageInput").value = "";
+      }
     });
 
     function loadMessages() {
@@ -94,7 +97,7 @@
         snapshot.forEach(doc => {
           const data = doc.data();
           const p = document.createElement("p");
-          p.innerHTML = `<strong>${data.name}</strong>: ${data.content}`;
+          p.textContent = `${data.name}: ${data.content}`;
           container.appendChild(p);
         });
       });
