@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Nơi lưu giữ kỉ niệm A6 niên khóa 2021-2025</title>
   <style>
     body {
@@ -14,57 +15,115 @@
       font-family: Arial, sans-serif;
       color: white;
       text-shadow: 1px 1px 2px #000;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 0;
     }
-
     .container {
-      background: rgba(0, 0, 0, 0.4);
-      padding: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px 25px;
       max-width: 600px;
-      margin: 0 auto;
-      border-radius: 10px;
-      margin-top: 30px;
+      width: 90%;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.7);
     }
-
     h1, h2 {
       text-align: center;
+      margin-bottom: 15px;
     }
-
-    #messageList {
-      margin-top: 20px;
+    p.intro {
+      text-align: center;
+      font-style: italic;
+      line-height: 1.5;
+      margin-bottom: 30px;
     }
-
-    input, button {
-      padding: 8px;
-      border: none;
-      border-radius: 4px;
+    form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+    input[type="text"] {
+      flex: 1 1 200px;
+      padding: 10px 12px;
       font-size: 16px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      transition: box-shadow 0.3s ease;
     }
-
-    #submitBtn {
-      margin-left: 8px;
-      background-color: #4CAF50;
+    input[type="text"]:focus {
+      box-shadow: 0 0 8px #4caf50;
+    }
+    button#submitBtn {
+      padding: 0 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      background-color: #4caf50;
       color: white;
       cursor: pointer;
       transition: background-color 0.3s ease;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-
-    #submitBtn:disabled {
+    button#submitBtn:hover:not(:disabled) {
+      background-color: #45a049;
+    }
+    button#submitBtn:disabled {
       background-color: #888;
       cursor: not-allowed;
+    }
+    #messageList {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 10px;
+      border-top: 1px solid #444;
+    }
+    #messageList p {
+      background: rgba(255 255 255 / 0.1);
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      word-wrap: break-word;
+    }
+    #messageList p span.name {
+      font-weight: 700;
+      color: #a8ffb0;
+    }
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #4caf50;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      margin-left: 8px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Nơi lưu giữ kỉ niệm A6 niên khóa 2021-2025</h1>
-    <p style="text-align: center; font-style: italic;">
-      Đã 1 khoảng thời gian trôi qua và chúng ta đều có cho mình những kỉ niệm đẹp cùng nhau. Nhưng có thể sau này sẽ không còn gặp nhau được nữa. Khi nghĩ về điều đó, mỗi chúng ta đều có suy nghĩ và cảm xúc khác nhau. Và tại đây, tôi mong muốn có thể được nghe cảm xúc thật của các bạn về khoảng thời gian cấp 2 đầy đẹp đẽ này.
+    <p class="intro">
+      Đã 1 khoảng thời gian trôi qua và chúng ta đều có cho mình những kỉ niệm đẹp cùng nhau.
+      Nhưng có thể sau này sẽ không còn gặp nhau được nữa. Khi nghĩ về điều đó, mỗi chúng ta đều có suy nghĩ và cảm xúc khác nhau.
+      Và tại đây, tôi mong muốn có thể được nghe cảm xúc thật của các bạn về khoảng thời gian cấp 2 đầy đẹp đẽ này.
     </p>
 
     <h2>Gửi lời nhắn</h2>
-    <input type="text" id="nameInput" placeholder="Tên của bạn...">
-    <input type="text" id="messageInput" placeholder="Nhập lời nhắn...">
-    <button id="submitBtn">Gửi</button>
+    <form id="messageForm" autocomplete="off">
+      <input type="text" id="nameInput" placeholder="Tên của bạn..." required />
+      <input type="text" id="messageInput" placeholder="Nhập lời nhắn..." required />
+      <button type="submit" id="submitBtn">Gửi</button>
+    </form>
 
     <h2>Cảm xúc của mọi người</h2>
     <div id="messageList"></div>
@@ -72,6 +131,7 @@
 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAhsQAGuHcWJs79kl49AJClCvEbzcqob30",
@@ -86,53 +146,67 @@
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const submitBtn = document.getElementById("submitBtn");
-    const nameInput = document.getElementById("nameInput");
-    const messageInput = document.getElementById("messageInput");
+    const form = document.getElementById('messageForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const nameInput = document.getElementById('nameInput');
+    const messageInput = document.getElementById('messageInput');
+    const messageList = document.getElementById('messageList');
 
-    submitBtn.addEventListener("click", async function () {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
       const name = nameInput.value.trim();
-      const msg = messageInput.value.trim();
+      const content = messageInput.value.trim();
 
-      if (!name || !msg) {
-        alert("Vui lòng nhập tên và lời nhắn.");
+      if (!name || !content) {
+        alert('Vui lòng nhập tên và lời nhắn.');
         return;
       }
 
-      // Hiệu ứng gửi
       submitBtn.disabled = true;
-      submitBtn.textContent = "Đang gửi...";
+      submitBtn.innerHTML = 'Đang gửi <div class="spinner"></div>';
 
       try {
-        await db.collection("messages").add({
-          name: name,
-          content: msg,
-          timestamp: new Date()
+        await db.collection('messages').add({
+          name,
+          content,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        messageInput.value = "";
-        alert("Gửi thành công!");
+        nameInput.value = '';
+        messageInput.value = '';
+
+        alert('Gửi thành công!');
       } catch (error) {
-        console.error("Lỗi khi gửi tin nhắn:", error);
-        alert("Đã xảy ra lỗi khi gửi lời nhắn. Vui lòng thử lại.");
+        console.error('Lỗi khi gửi tin nhắn:', error);
+        alert('Đã xảy ra lỗi khi gửi lời nhắn. Vui lòng thử lại.');
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = "Gửi";
+        submitBtn.textContent = 'Gửi';
       }
     });
 
     function loadMessages() {
-      db.collection("messages").orderBy("timestamp", "desc").onSnapshot(snapshot => {
-        const container = document.getElementById("messageList");
-        container.innerHTML = "";
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const p = document.createElement("p");
-          p.textContent = `${data.name}: ${data.content}`;
-          container.appendChild(p);
+      db.collection('messages')
+        .orderBy('timestamp', 'desc')
+        .onSnapshot(snapshot => {
+          messageList.innerHTML = '';
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const time = data.timestamp ? data.timestamp.toDate().toLocaleString() : '';
+            const p = document.createElement('p');
+            p.innerHTML = `<span class="name">${escapeHtml(data.name)}</span>: ${escapeHtml(data.content)}<br><small style="opacity:0.7; font-size:12px;">${time}</small>`;
+            messageList.appendChild(p);
+          });
         });
-      });
     }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.appendChild(document.createTextNode(text));
+      return div.innerHTML;
+    }
+
     loadMessages();
   </script>
 </body>
