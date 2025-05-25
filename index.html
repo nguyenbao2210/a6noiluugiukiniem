@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nơi lưu giữ kỉ niệm A6 niên khóa 2021-2025</title>
   <style>
     body {
-      background-image: url('d4465b16-5a30-4307-8648-55c78a2eaeb6.png');
+      background-image: url('https://i.postimg.cc/XNRVwfMm/images.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -15,129 +15,104 @@
       font-family: Arial, sans-serif;
       color: white;
       text-shadow: 1px 1px 2px #000;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 40px 0;
     }
+
     .container {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 30px 25px;
-      max-width: 600px;
-      width: 90%;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.7);
+      background: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      border-radius: 10px;
+      margin-top: 30px;
     }
+
     h1, h2 {
       text-align: center;
-      margin-bottom: 15px;
     }
-    p.intro {
-      text-align: center;
-      font-style: italic;
-      line-height: 1.5;
-      margin-bottom: 30px;
+
+    #messageList {
+      margin-top: 20px;
     }
-    form {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-    }
-    input[type="text"] {
-      flex: 1 1 200px;
-      padding: 10px 12px;
-      font-size: 16px;
-      border-radius: 6px;
+
+    input, button {
+      padding: 8px;
       border: none;
-      outline: none;
-      transition: box-shadow 0.3s ease;
-    }
-    input[type="text"]:focus {
-      box-shadow: 0 0 8px #4caf50;
-    }
-    button#submitBtn {
-      padding: 0 25px;
+      border-radius: 4px;
       font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      background-color: #4caf50;
+    }
+
+    #submitBtn {
+      margin-left: 8px;
+      background-color: #4CAF50;
       color: white;
       cursor: pointer;
       transition: background-color 0.3s ease;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
-    button#submitBtn:hover:not(:disabled) {
-      background-color: #45a049;
-    }
-    button#submitBtn:disabled {
+
+    #submitBtn:disabled {
       background-color: #888;
       cursor: not-allowed;
     }
-    #messageList {
-      max-height: 400px;
-      overflow-y: auto;
-      padding-right: 10px;
-      border-top: 1px solid #444;
-    }
-    #messageList p {
-      background: rgba(255 255 255 / 0.1);
-      padding: 12px 15px;
+
+    .message {
+      background-color: rgba(255, 255, 255, 0.1);
       border-radius: 8px;
+      padding: 10px;
       margin-bottom: 10px;
-      word-wrap: break-word;
     }
-    #messageList p span.name {
-      font-weight: 700;
-      color: #a8ffb0;
+
+    .pagination {
+      text-align: center;
+      margin-top: 20px;
     }
-    .spinner {
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #4caf50;
-      border-radius: 50%;
-      width: 16px;
-      height: 16px;
-      animation: spin 1s linear infinite;
-      margin-left: 8px;
+
+    .pagination button {
+      margin: 0 5px;
+      padding: 6px 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+
+    .pagination button:disabled {
+      background-color: #666;
+      cursor: not-allowed;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Nơi lưu giữ kỉ niệm A6 niên khóa 2021-2025</h1>
-    <p class="intro">
-      Đã 1 khoảng thời gian trôi qua và chúng ta đều có cho mình những kỉ niệm đẹp cùng nhau.
-      Nhưng có thể sau này sẽ không còn gặp nhau được nữa. Khi nghĩ về điều đó, mỗi chúng ta đều có suy nghĩ và cảm xúc khác nhau.
-      Và tại đây, tôi mong muốn có thể được nghe cảm xúc thật của các bạn về khoảng thời gian cấp 2 đầy đẹp đẽ này.
+    <p style="text-align: center; font-style: italic;">
+      Đã 1 khoảng thời gian trôi qua và chúng ta đều có cho mình những kỉ niệm đẹp cùng nhau. Nhưng có thể sau này sẽ không còn gặp nhau được nữa. Khi nghĩ về điều đó, mỗi chúng ta đều có suy nghĩ và cảm xúc khác nhau. Và tại đây, tôi mong muốn có thể được nghe cảm xúc thật của các bạn về khoảng thời gian cấp 2 đầy đẹp đẽ này.
     </p>
 
-    <h2>Gửi lời nhắn</h2>
-    <form id="messageForm" autocomplete="off">
-      <input type="text" id="nameInput" placeholder="Tên của bạn..." required />
-      <input type="text" id="messageInput" placeholder="Nhập lời nhắn..." required />
-      <button type="submit" id="submitBtn">Gửi</button>
-    </form>
+    <div id="formSection">
+      <h2>Gửi lời nhắn</h2>
+      <input type="text" id="nameInput" placeholder="Tên của bạn...">
+      <input type="text" id="messageInput" placeholder="Nhập lời nhắn...">
+      <button id="submitBtn">Gửi</button>
+    </div>
 
     <h2>Cảm xúc của mọi người</h2>
     <div id="messageList"></div>
+    <div class="pagination">
+      <button id="prevPage">Trang trước</button>
+      <span id="pageInfo"></span>
+      <button id="nextPage">Trang sau</button>
+    </div>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyAhsQAGuHcWJs79kl49AJClCvEbzcqob30",
+      apiKey: "AIzaSyAhsQAGuHCWJs79k149AJC1CvEbzcqob30",
       authDomain: "a6noiluugiunhungkiniem.firebaseapp.com",
       projectId: "a6noiluugiunhungkiniem",
-      storageBucket: "a6noiluugiunhungkiniem.firebasestorage.app",
+      storageBucket: "a6noiluugiunhungkiniem.appspot.com",
       messagingSenderId: "834977276667",
       appId: "1:834977276667:web:704f0a898394e3744ec65e",
       measurementId: "G-GHK2V4XZ38"
@@ -146,66 +121,85 @@
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const form = document.getElementById('messageForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const nameInput = document.getElementById('nameInput');
-    const messageInput = document.getElementById('messageInput');
-    const messageList = document.getElementById('messageList');
+    const submitBtn = document.getElementById("submitBtn");
+    const nameInput = document.getElementById("nameInput");
+    const messageInput = document.getElementById("messageInput");
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
+    submitBtn.addEventListener("click", async function () {
       const name = nameInput.value.trim();
-      const content = messageInput.value.trim();
+      const msg = messageInput.value.trim();
 
-      if (!name || !content) {
-        alert('Vui lòng nhập tên và lời nhắn.');
+      if (!name || !msg) {
+        alert("Vui lòng nhập tên và lời nhắn.");
         return;
       }
 
       submitBtn.disabled = true;
-      submitBtn.innerHTML = 'Đang gửi <div class="spinner"></div>';
+      submitBtn.textContent = "Đang gửi...";
 
       try {
-        await db.collection('messages').add({
-          name,
-          content,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        await db.collection("messages").add({
+          name: name,
+          content: msg,
+          timestamp: new Date()
         });
 
-        nameInput.value = '';
-        messageInput.value = '';
-
-        alert('Gửi thành công!');
+        messageInput.value = "";
+        alert("Gửi thành công!");
       } catch (error) {
-        console.error('Lỗi khi gửi tin nhắn:', error);
-        alert('Đã xảy ra lỗi khi gửi lời nhắn. Vui lòng thử lại.');
+        console.error("Lỗi khi gửi tin nhắn:", error);
+        alert("Đã xảy ra lỗi khi gửi lời nhắn. Vui lòng thử lại.");
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Gửi';
+        submitBtn.textContent = "Gửi";
       }
     });
 
-    function loadMessages() {
-      db.collection('messages')
-        .orderBy('timestamp', 'desc')
-        .onSnapshot(snapshot => {
-          messageList.innerHTML = '';
-          snapshot.forEach(doc => {
-            const data = doc.data();
-            const time = data.timestamp ? data.timestamp.toDate().toLocaleString() : '';
-            const p = document.createElement('p');
-            p.innerHTML = `<span class="name">${escapeHtml(data.name)}</span>: ${escapeHtml(data.content)}<br><small style="opacity:0.7; font-size:12px;">${time}</small>`;
-            messageList.appendChild(p);
-          });
-        });
+    let currentPage = 1;
+    const messagesPerPage = 10;
+
+    function renderMessages(docs) {
+      const container = document.getElementById("messageList");
+      container.innerHTML = "";
+
+      docs.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.className = "message";
+        const date = data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
+        div.innerHTML = `<strong>${data.name}</strong> (${date.toLocaleString()}):<br>${data.content}`;
+        container.appendChild(div);
+      });
     }
 
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.appendChild(document.createTextNode(text));
-      return div.innerHTML;
+    async function loadMessages() {
+      const formSection = document.getElementById("formSection");
+      const snapshot = await db.collection("messages").orderBy("timestamp", "desc").get();
+      const messages = snapshot.docs;
+
+      const startIndex = (currentPage - 1) * messagesPerPage;
+      const endIndex = startIndex + (currentPage === 1 ? 5 : 10);
+
+      renderMessages(messages.slice(startIndex, endIndex));
+
+      formSection.style.display = currentPage === 1 ? "block" : "none";
+      document.getElementById("pageInfo").textContent = `Trang ${currentPage}`;
+
+      document.getElementById("prevPage").disabled = currentPage === 1;
+      document.getElementById("nextPage").disabled = endIndex >= messages.length;
     }
+
+    document.getElementById("prevPage").addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        loadMessages();
+      }
+    });
+
+    document.getElementById("nextPage").addEventListener("click", () => {
+      currentPage++;
+      loadMessages();
+    });
 
     loadMessages();
   </script>
