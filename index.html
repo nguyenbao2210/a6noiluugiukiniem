@@ -16,7 +16,6 @@
       color: white;
       text-shadow: 1px 1px 2px #000;
     }
-
     .container {
       background: rgba(0, 0, 0, 0.5);
       padding: 20px;
@@ -25,22 +24,18 @@
       border-radius: 10px;
       margin-top: 30px;
     }
-
     h1, h2 {
       text-align: center;
     }
-
     #messageList {
       margin-top: 20px;
     }
-
     input, button {
       padding: 8px;
       border: none;
       border-radius: 4px;
       font-size: 16px;
     }
-
     #submitBtn {
       margin-left: 8px;
       background-color: #4CAF50;
@@ -48,24 +43,30 @@
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
-
     #submitBtn:disabled {
       background-color: #888;
       cursor: not-allowed;
     }
-
     .message {
       background-color: rgba(255, 255, 255, 0.1);
       border-radius: 8px;
       padding: 10px;
       margin-bottom: 10px;
     }
-
+    .delete-btn {
+      float: right;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 2px 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
     .pagination {
       text-align: center;
       margin-top: 20px;
     }
-
     .pagination button {
       margin: 0 5px;
       padding: 6px 12px;
@@ -75,7 +76,6 @@
       border-radius: 4px;
       cursor: pointer;
     }
-
     .pagination button:disabled {
       background-color: #666;
       cursor: not-allowed;
@@ -83,31 +83,32 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Nơi lưu giữ kỉ niệm A6 niên khóa 2021-2025</h1>
-    <p style="text-align: center; font-style: italic;">
-      Đã 1 khoảng thời gian trôi qua và chúng ta đều có cho mình những kỉ niệm đẹp cùng nhau. Nhưng có thể sau này sẽ không còn gặp nhau được nữa. Khi nghĩ về điều đó, mỗi chúng ta đều có suy nghĩ và cảm xúc khác nhau. Và tại đây, tôi mong muốn có thể được nghe cảm xúc thật của các bạn về khoảng thời gian cấp 2 đầy đẹp đẽ này.
-    </p>
+<div class="container">
+  <h1>Nơi lưu giữ kỉ niệm A6 niên khóa 2021-2025</h1>
+  <p style="text-align: center; font-style: italic;">
+    Đã 1 khoảng thời gian trôi qua và chúng ta đều có cho mình những kỉ niệm đẹp cùng nhau. Nhưng có thể sau này sẽ không còn gặp nhau được nữa. Khi nghĩ về điều đó, mỗi chúng ta đều có suy nghĩ và cảm xúc khác nhau. Và tại đây, tôi mong muốn có thể được nghe cảm xúc thật của các bạn về khoảng thời gian cấp 2 đầy đẹp đẽ này.
+  </p>
 
-    <div id="formSection">
-      <h2>Gửi lời nhắn</h2>
-      <input type="text" id="nameInput" placeholder="Tên của bạn...">
-      <input type="text" id="messageInput" placeholder="Nhập lời nhắn...">
-      <button id="submitBtn">Gửi</button>
-    </div>
-
-    <h2>Cảm xúc của mọi người</h2>
-    <div id="messageList"></div>
-    <div class="pagination">
-      <button id="prevPage">Trang trước</button>
-      <span id="pageInfo"></span>
-      <button id="nextPage">Trang sau</button>
-    </div>
+  <div id="formSection">
+    <h2>Gửi lời nhắn</h2>
+    <input type="password" id="adminCode" placeholder="Mã admin (tuỳ chọn)">
+    <input type="text" id="nameInput" placeholder="Tên của bạn...">
+    <input type="text" id="messageInput" placeholder="Nhập lời nhắn...">
+    <button id="submitBtn">Gửi</button>
   </div>
+
+  <h2>Cảm xúc của mọi người</h2>
+  <div id="messageList"></div>
+  <div class="pagination">
+    <button id="prevPage">Trang trước</button>
+    <span id="pageInfo"></span>
+    <button id="nextPage">Trang sau</button>
+  </div>
+</div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAhsQAGuHCWJs79k149AJC1CvEbzcqob30",
@@ -125,13 +126,74 @@
   const submitBtn = document.getElementById("submitBtn");
   const nameInput = document.getElementById("nameInput");
   const messageInput = document.getElementById("messageInput");
+  const adminCodeInput = document.getElementById("adminCode");
+
+  let currentPage = 1;
+  const maxPage = 10;
+
+  async function loadMessages() {
+    const formSection = document.getElementById("formSection");
+    const q = query(collection(db, "messages"), orderBy("timestamp", "desc"));
+    const snapshot = await getDocs(q);
+    const messages = snapshot.docs;
+
+    let startIndex = 0;
+    for (let i = 1; i < currentPage; i++) {
+      startIndex += i === 1 ? 5 : 10;
+    }
+    const pageSize = currentPage === 1 ? 5 : 10;
+    const endIndex = startIndex + pageSize;
+
+    renderMessages(messages.slice(startIndex, endIndex));
+
+    formSection.style.display = currentPage === 1 ? "block" : "none";
+    document.getElementById("pageInfo").textContent = `Trang ${currentPage}`;
+    document.getElementById("prevPage").disabled = currentPage === 1;
+    document.getElementById("nextPage").disabled = currentPage >= maxPage || endIndex >= messages.length;
+  }
+
+  function renderMessages(docs) {
+    const container = document.getElementById("messageList");
+    container.innerHTML = "";
+    const isAdmin = adminCodeInput.value === "glassz13";
+
+    docs.forEach(docSnap => {
+      const data = docSnap.data();
+      const div = document.createElement("div");
+      div.className = "message";
+      const date = data.timestamp?.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
+      div.innerHTML = `<strong>${data.name}</strong> (${date.toLocaleString()}):<br>${data.content}`;
+
+      if (isAdmin) {
+        const btn = document.createElement("button");
+        btn.textContent = "🗑 Xoá";
+        btn.className = "delete-btn";
+        btn.onclick = async () => {
+          if (confirm("Bạn có chắc muốn xoá lời nhắn này không?")) {
+            await deleteDoc(doc(db, "messages", docSnap.id));
+            loadMessages();
+          }
+        };
+        div.appendChild(btn);
+      }
+
+      container.appendChild(div);
+    });
+  }
 
   submitBtn.addEventListener("click", async function () {
     const name = nameInput.value.trim();
     const msg = messageInput.value.trim();
-
     if (!name || !msg) {
       alert("Vui lòng nhập tên và lời nhắn.");
+      return;
+    }
+
+    const q = query(collection(db, "messages"), orderBy("timestamp", "desc"));
+    const snapshot = await getDocs(q);
+    const duplicate = snapshot.docs.find(d => d.data().name === name && d.data().content === msg);
+    if (duplicate) {
+      alert("Lời nhắn này đã tồn tại!");
       return;
     }
 
@@ -144,7 +206,6 @@
         content: msg,
         timestamp: new Date()
       });
-
       messageInput.value = "";
       alert("Gửi thành công!");
       loadMessages();
@@ -156,45 +217,6 @@
       submitBtn.textContent = "Gửi";
     }
   });
-
-  let currentPage = 1;
-  const messagesPerPage = 10;
-
-async function loadMessages() {
-  const formSection = document.getElementById("formSection");
-  const q = query(collection(db, "messages"), orderBy("timestamp", "desc"));
-  const snapshot = await getDocs(q);
-  const messages = snapshot.docs;
-
-  // Tính toán startIndex theo logic phân trang mới
-  let startIndex = 0;
-  for (let i = 1; i < currentPage; i++) {
-    startIndex += i === 1 ? 5 : 10;
-  }
-  const pageSize = currentPage === 1 ? 5 : 10;
-  const endIndex = startIndex + pageSize;
-
-  renderMessages(messages.slice(startIndex, endIndex));
-
-  formSection.style.display = currentPage === 1 ? "block" : "none";
-  document.getElementById("pageInfo").textContent = `Trang ${currentPage}`;
-  document.getElementById("prevPage").disabled = currentPage === 1;
-  document.getElementById("nextPage").disabled = currentPage >= 10 || endIndex >= messages.length;
-}
-
-  function renderMessages(docs) {
-    const container = document.getElementById("messageList");
-    container.innerHTML = "";
-
-    docs.forEach(doc => {
-      const data = doc.data();
-      const div = document.createElement("div");
-      div.className = "message";
-      const date = data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
-      div.innerHTML = `<strong>${data.name}</strong> (${date.toLocaleString()}):<br>${data.content}`;
-      container.appendChild(div);
-    });
-  }
 
   document.getElementById("prevPage").addEventListener("click", () => {
     if (currentPage > 1) {
