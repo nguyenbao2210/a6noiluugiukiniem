@@ -1,17 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lưu giữ kỉ niệm A6</title>
+  <title>Nơi lưu giữ kỉ niệm A6 niên khóa 2021-2025</title>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url('https://i.imgur.com/YOUR_BACKGROUND_IMAGE.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #fff;
+      text-align: center;
+      padding: 30px;
+    }
+    #messageList p {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 5px;
+      margin: 5px auto;
+      width: 80%;
+    }
+    input {
+      padding: 5px;
+      border-radius: 4px;
+      border: none;
+    }
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      background-color: #2196F3;
+      color: white;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: grey;
+    }
+  </style>
 </head>
 <body>
-  <h1>Gửi lời nhắn</h1>
-  <input type="text" id="messageInput" placeholder="Nhập lời nhắn...">
+  <h1>Nơi lưu giữ kỉ niệm A6 niên khóa 2021-2025</h1>
+  <p>Đã 1 khoảng thời gian trôi qua và chúng ta đều có cho mình những kỉ niệm đẹp cùng nhau. Nhưng có thể sau này sẽ không còn gặp nhau được nữa. Khi nghĩ về điều đó, mỗi chúng ta đều có suy nghĩ và cảm xúc khác nhau. Và tại đây, tôi mong muốn có thể được nghe cảm xúc thật của các bạn về khoảng thời gian cấp 2 đầy đẹp đẽ này.</p>
+
+  <h2>Gửi lời nhắn</h2>
+  <input id="nameInput" placeholder="Tên của bạn...">
+  <input id="messageInput" placeholder="Nhập lời nhắn...">
   <button id="submitBtn">Gửi</button>
-  <h2>Các lời nhắn</h2>
+
+  <h2>Cảm xúc của mọi người</h2>
   <div id="messageList"></div>
 
   <script>
@@ -28,15 +67,24 @@
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    document.getElementById("submitBtn").addEventListener("click", function () {
-      const msg = document.getElementById("messageInput").value;
-      if (msg.trim() !== "") {
-        db.collection("messages").add({
-          content: msg,
-          timestamp: new Date()
-        });
-        document.getElementById("messageInput").value = "";
-      }
+    const submitBtn = document.getElementById("submitBtn");
+    const messageInput = document.getElementById("messageInput");
+    const nameInput = document.getElementById("nameInput");
+
+    submitBtn.addEventListener("click", function () {
+      const msg = messageInput.value.trim();
+      const name = nameInput.value.trim() || "Ẩn danh";
+      if (!msg) return;
+
+      submitBtn.disabled = true;
+      db.collection("messages").add({
+        name: name,
+        content: msg,
+        timestamp: new Date()
+      }).then(() => {
+        messageInput.value = "";
+        submitBtn.disabled = false;
+      });
     });
 
     function loadMessages() {
@@ -44,13 +92,13 @@
         const container = document.getElementById("messageList");
         container.innerHTML = "";
         snapshot.forEach(doc => {
+          const data = doc.data();
           const p = document.createElement("p");
-          p.textContent = doc.data().content;
+          p.innerHTML = `<strong>${data.name}</strong>: ${data.content}`;
           container.appendChild(p);
         });
       });
     }
-
     loadMessages();
   </script>
 </body>
