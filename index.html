@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A6 - nơi lưu giữ những kỉ niệm</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: black;
+      color: white;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      text-align: center;
+      animation: fadein 2s ease-in-out;
+    }
+
+    @keyframes fadein {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>A6 - nơi lưu giữ những kỉ niệm</h1>
+    <audio autoplay loop>
+      <source src="https://www.technobladeneverdies.com/music.mp3" type="audio/mpeg">
+      Trình duyệt của bạn không hỗ trợ audio.
+    </audio>
+  </div>
+</body>
+</html>
