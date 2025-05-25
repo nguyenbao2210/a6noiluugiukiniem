@@ -160,22 +160,27 @@
   let currentPage = 1;
   const messagesPerPage = 10;
 
-  async function loadMessages() {
-    const formSection = document.getElementById("formSection");
-    const q = query(collection(db, "messages"), orderBy("timestamp", "desc"));
-    const snapshot = await getDocs(q);
-    const messages = snapshot.docs;
+async function loadMessages() {
+  const formSection = document.getElementById("formSection");
+  const q = query(collection(db, "messages"), orderBy("timestamp", "desc"));
+  const snapshot = await getDocs(q);
+  const messages = snapshot.docs;
 
-    const startIndex = (currentPage - 1) * messagesPerPage;
-    const endIndex = startIndex + (currentPage === 1 ? 5 : 10);
-
-    renderMessages(messages.slice(startIndex, endIndex));
-
-    formSection.style.display = currentPage === 1 ? "block" : "none";
-    document.getElementById("pageInfo").textContent = `Trang ${currentPage}`;
-    document.getElementById("prevPage").disabled = currentPage === 1;
-    document.getElementById("nextPage").disabled = endIndex >= messages.length;
+  // Tính toán startIndex theo logic phân trang mới
+  let startIndex = 0;
+  for (let i = 1; i < currentPage; i++) {
+    startIndex += i === 1 ? 5 : 10;
   }
+  const pageSize = currentPage === 1 ? 5 : 10;
+  const endIndex = startIndex + pageSize;
+
+  renderMessages(messages.slice(startIndex, endIndex));
+
+  formSection.style.display = currentPage === 1 ? "block" : "none";
+  document.getElementById("pageInfo").textContent = `Trang ${currentPage}`;
+  document.getElementById("prevPage").disabled = currentPage === 1;
+  document.getElementById("nextPage").disabled = currentPage >= 10 || endIndex >= messages.length;
+}
 
   function renderMessages(docs) {
     const container = document.getElementById("messageList");
