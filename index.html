@@ -1,258 +1,64 @@
 <!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nơi lưu giữ kỉ niệm A6 niên khóa 2021-2025</title>
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <style>
-    body {
-      background-image: url('https://i.postimg.cc/XNRVwfMm/images.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      min-height: 100vh;
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: white;
-      text-shadow: 1px 1px 2px #000;
-    }
-    .container {
-      background: rgba(0, 0, 0, 0.5);
-      padding: 20px;
-      max-width: 700px;
-      margin: 0 auto;
-      border-radius: 10px;
-      margin-top: 30px;
-    }
-    h1, h2 {
-      text-align: center;
-    }
-    #messageList {
-      margin-top: 20px;
-    }
-    input, button {
-      padding: 8px;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
-    }
-    #submitBtn {
-      margin-left: 8px;
-      background-color: #4CAF50;
-      color: white;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    #submitBtn:disabled {
-      background-color: #888;
-      cursor: not-allowed;
-    }
-    .message {
-      background-color: rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 10px;
-    }
-    .delete-btn {
-      float: right;
-      background: red;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 2px 6px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-    .pagination {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .pagination button {
-      margin: 0 5px;
-      padding: 6px 12px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .pagination button:disabled {
-      background-color: #666;
-      cursor: not-allowed;
-    }
-  </style>
+background: #f8f8f8;
+color: #333;
+text-align: center;
+}
+header {
+background: linear-gradient(90deg, #222, #444);
+color: white;
+padding: 20px 0;
+}
+header h1 {
+margin: 0;
+font-size: 28px;
+}
+header h2 {
+margin: 5px 0 0;
+font-size: 18px;
+font-weight: normal;
+color: #ffcc00;
+}
+.navbar {
+background: #222;
+padding: 10px;
+}
+.navbar ul {
+list-style: none;
+margin: 0;
+padding: 0;
+display: flex;
+justify-content: center;
+gap: 20px;
+}
+.navbar li a {
+color: white;
+text-decoration: none;
+font-size: 18px;
+transition: 0.3s;
+}
+.navbar li a:hover {
+color: #ffcc00;
+}
+</style>
 </head>
 <body>
-<div class="container">
-  <h1>Nơi lưu giữ kỉ niệm A6 niên khóa 2021-2025</h1>
-  <p style="text-align: center; font-style: italic;">
-    Đã 1 khoảng thời gian trôi qua và chúng ta đều có cho mình những kỉ niệm đẹp cùng nhau. Nhưng có thể sau này sẽ không còn gặp nhau được nữa. Khi nghĩ về điều đó, mỗi chúng ta đều có suy nghĩ và cảm xúc khác nhau. Và tại đây, tôi mong muốn có thể được nghe cảm xúc thật của các bạn về khoảng thời gian cấp 2 đầy đẹp đẽ này.
-  </p>
+<header>
+<h1>The Legacy of 10A8 – K24, THPT Nhân Chính (2025–2028)</h1>
+<h2>Những con hổ dũng mãnh của Nhân Chính</h2>
+</header>
+<nav class="navbar">
+<ul>
+<li><a href="index.html">🏠 Trang chủ</a></li>
+<li><a href="gallery.html">🖼 Gallery</a></li>
+<li><a href="video.html">🎬 Video</a></li>
+<li><a href="messages.html">💬 Lời nhắn</a></li>
+</ul>
+</nav>
 
-  <div id="formSection">
-    <h2>Gửi lời nhắn</h2>
-    <input type="text" id="nameInput" placeholder="Tên của bạn...">
-    <input type="text" id="messageInput" placeholder="Nhập lời nhắn...">
-    <button id="submitBtn">Gửi</button>
-  </div>
 
-  <h2>Cảm xúc của mọi người</h2>
-  <div id="messageList"></div>
-  <div class="pagination">
-    <button id="prevPage">Trang trước</button>
-    <span id="pageInfo"></span>
-    <button id="nextPage">Trang sau</button>
-  </div>
-</div>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAhsQAGuHCWJs79k149AJC1CvEbzcqob30",
-    authDomain: "a6noiluugiunhungkiniem.firebaseapp.com",
-    projectId: "a6noiluugiunhungkiniem",
-    storageBucket: "a6noiluugiunhungkiniem.appspot.com",
-    messagingSenderId: "834977276667",
-    appId: "1:834977276667:web:704f0a898394e3744ec65e",
-    measurementId: "G-GHK2V4XZ38"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  const submitBtn = document.getElementById("submitBtn");
-  const nameInput = document.getElementById("nameInput");
-  const messageInput = document.getElementById("messageInput");
-
-  let currentPage = 1;
-
-  async function loadMessages() {
-    const formSection = document.getElementById("formSection");
-    const adminCodeInput = document.getElementById("adminCode");
-    const q = query(collection(db, "messages"), orderBy("timestamp", "desc"));
-    const snapshot = await getDocs(q);
-    const messages = snapshot.docs;
-
-    const totalPages = Math.ceil((messages.length - 5) / 10) + 1;
-    let startIndex = 0;
-    for (let i = 1; i < currentPage; i++) {
-      startIndex += i === 1 ? 5 : 10;
-    }
-    const pageSize = currentPage === 1 ? 5 : 10;
-    const endIndex = startIndex + pageSize;
-
-    renderMessages(messages.slice(startIndex, endIndex), adminCodeInput.value);
-
-    formSection.style.display = currentPage === 1 ? "block" : "none";
-    document.getElementById("pageInfo").textContent = `Trang ${currentPage}`;
-    document.getElementById("prevPage").disabled = currentPage === 1;
-    document.getElementById("nextPage").disabled = currentPage >= totalPages || endIndex >= messages.length;
-  }
-
-  function renderMessages(docs, adminCode) {
-    const container = document.getElementById("messageList");
-    container.innerHTML = "";
-    const isAdmin = adminCode === "a6admin2025";
-
-    docs.forEach(docSnap => {
-      const data = docSnap.data();
-      const div = document.createElement("div");
-      div.className = "message";
-      const date = data.timestamp?.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
-      div.innerHTML = `<strong>${data.name}</strong> (${date.toLocaleString()}):<br>${data.content}`;
-
-      if (isAdmin) {
-        const btn = document.createElement("button");
-        btn.textContent = "🗑 Xoá";
-        btn.className = "delete-btn";
-        btn.onclick = async () => {
-          if (confirm("Bạn có chắc muốn xoá lời nhắn này không?")) {
-            try {
-              await deleteDoc(doc(db, "messages", docSnap.id));
-              loadMessages();
-            } catch (err) {
-              alert("Lỗi khi xoá lời nhắn.");
-            }
-          }
-        };
-        div.appendChild(btn);
-      }
-
-      container.appendChild(div);
-    });
-  }
-
-  submitBtn.addEventListener("click", async function () {
-    const name = nameInput.value.trim();
-    const msg = messageInput.value.trim();
-    if (!name || !msg) {
-      alert("Vui lòng nhập tên và lời nhắn.");
-      return;
-    }
-
-    const q = query(collection(db, "messages"), orderBy("timestamp", "desc"));
-    const snapshot = await getDocs(q);
-    const duplicate = snapshot.docs.find(d => d.data().name === name && d.data().content === msg);
-    if (duplicate) {
-      alert("Lời nhắn này đã tồn tại!");
-      return;
-    }
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Đang gửi...";
-
-    try {
-      await addDoc(collection(db, "messages"), {
-        name: name,
-        content: msg,
-        timestamp: new Date()
-      });
-      messageInput.value = "";
-      alert("Gửi thành công!");
-      loadMessages();
-    } catch (error) {
-      console.error("Lỗi khi gửi tin nhắn:", error);
-      alert("Đã xảy ra lỗi khi gửi lời nhắn. Vui lòng thử lại.");
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Gửi";
-    }
-  });
-
-  document.getElementById("prevPage").addEventListener("click", () => {
-    if (currentPage > 1) {
-      currentPage--;
-      loadMessages();
-    }
-  });
-
-  document.getElementById("nextPage").addEventListener("click", () => {
-    currentPage++;
-    loadMessages();
-  });
-
-  loadMessages();
-
-  document.getElementById("adminOkBtn").addEventListener("click", () => {
-  loadMessages();
-});
-
-</script>
-
-<!-- Mã admin -->
-<button id="adminToggle" style="position: fixed; bottom: 20px; right: 20px; background: #4CAF50; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer;">🔐 Nhập mã admin</button>
-<div id="adminBox" style="display: none; position: fixed; bottom: 70px; right: 20px; background: rgba(0,0,0,0.8); padding: 10px; border-radius: 8px;">
-  <input type="password" id="adminCode" placeholder="Mã admin" style="padding: 6px; border-radius: 4px; border: none;">
-  <button type="button" id="adminOkBtn" style="margin-left: 6px; padding: 6px 10px; background: #4CAF50; color: white; border: none; border-radius: 4px;">OK</button>
-</div>
-<script>
-  document.getElementById("adminToggle").addEventListener("click", () => {
-    const box = document.getElementById("adminBox");
-    box.style.display = box.style.display === "none" ? "block" : "none";
-  });
-</script>
+<main>
+<h3>Chào mừng đến với website lưu giữ kỉ niệm của 10A8 – K24</h3>
+<p>Trang chủ hiện đang được cập nhật nội dung...</p>
+</main>
 </body>
 </html>
